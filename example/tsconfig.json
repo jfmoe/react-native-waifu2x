@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "react-native-waifu2x": ["../src/index"],
+      "react-native-waifu2x/*": ["../src/*"]
+    }
+  }
+}
