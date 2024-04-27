@@ -24,9 +24,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "expo.modules.waifu2x.example"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
   }
 }

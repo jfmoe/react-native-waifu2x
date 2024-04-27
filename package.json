@@ -28,11 +28,13 @@
   "author": "jfmoe <34602628+jfmoe@users.noreply.github.com> (https://github.com/jfmoe/manga-reader)",
   "license": "MIT",
   "homepage": "https://github.com/jfmoe/manga-reader/react-native-waifu2x#readme",
-  "dependencies": {},
   "devDependencies": {
     "@types/react": "^18.0.25",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-json": "^3.1.0",
     "expo-module-scripts": "^3.4.1",
-    "expo-modules-core": "^1.11.12"
+    "expo-modules-core": "^1.11.12",
+    "prettier": "^3.2.5"
   },
   "peerDependencies": {
     "expo": "*",
