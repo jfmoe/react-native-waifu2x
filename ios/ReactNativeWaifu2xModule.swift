@@ -1,4 +1,10 @@
+import Foundation
+import UIKit
+import Dispatch
 import ExpoModulesCore
+import CoreML
+import CoreServices
+import AVFoundation
 
 public class ReactNativeWaifu2xModule: Module {
   // Each module class must implement the definition function. The definition consists of components
@@ -23,6 +29,27 @@ public class ReactNativeWaifu2xModule: Module {
       return "Hello world! 👋"
     }
 
+    AsyncFunction("convert") { (imageUri: String, modelUri: String, saveUri: String) in
+      let outimage = Waifu2x.run(imageFromLocalUri(imageUri), model: Model.anime_noise1_scale2x, modelPath: URL(string: modelUri))
+        
+      let imageData = (outimage!).jpegData(compressionQuality: 1)
+
+      if let uri = URL(string: saveUri) {
+        do {
+            try imageData!.write(to: uri)
+            print("Image saved successfully.")
+        } catch {
+            print("Error saving image:", error)
+        }
+      } else {
+          print("Invalid URL.")
+      }
+      
+      self.sendEvent("onChange", [
+        "value": saveUri
+      ])
+    }
+
     // Defines a JavaScript function that always returns a Promise and whose native code
     // is by default dispatched on the different thread than the JavaScript runtime runs on.
     AsyncFunction("setValueAsync") { (value: String) in
@@ -41,4 +68,28 @@ public class ReactNativeWaifu2xModule: Module {
       }
     }
   }
+}
+
+func imageFromLocalUri(_ uri: String) -> UIImage? {
+    // 将 URI 字符串转换为 URL
+    guard let url = URL(string: uri) else {
+        print("无效的 URL")
+        return nil
+    }
+
+    // 检查 URL 是否是文件 URL
+    guard url.isFileURL else {
+        print("URL 不是文件 URL")
+        return nil
+    }
+
+    // 尝试从文件 URL 加载数据并创建 UIImage
+    do {
+        let imageData = try Data(contentsOf: url)
+        let image = UIImage(data: imageData)
+        return image
+    } catch {
+        print("无法加载图片: \(error)")
+        return nil
+    }
 }

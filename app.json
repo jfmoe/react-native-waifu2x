@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "react-native-waifu2x",
+    "slug": "react-native-waifu2x",
+    "version": "0.1.0",
+    "description": "My new module",
+    "sdkVersion": "50.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  }
+}
