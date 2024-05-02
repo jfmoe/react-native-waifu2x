@@ -4,7 +4,7 @@ module.exports = {
     node: true,
   },
   extends: ['universe/native', 'universe/web', 'prettier'],
-  ignorePatterns: ['build'],
+  ignorePatterns: ['build', 'README.md'],
   overrides: [
     {
       files: '*.json',
