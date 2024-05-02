@@ -1,69 +1,81 @@
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
-import { useEffect, useRef, useState } from 'react';
-import { Button, StyleSheet, Text, View, Image } from 'react-native';
+import { useState } from 'react';
+import { Button, Image, StyleSheet, Text, View } from 'react-native';
 import * as ReactNativeWaifu2x from 'react-native-waifu2x';
 
+interface Model {
+  name: string;
+  uri: string;
+}
+
 export default function App() {
+  const [model, setModel] = useState<Model | null>(null);
   const [image, setImage] = useState<string | null>(null);
-  const modelUri = useRef<string | null>(null);
-
-  const readImage = async () => {
-    const result = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'image.jpg');
-    console.log(result);
-  };
-
-  useEffect(() => {
-    readImage();
-  }, []);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.5,
     });
 
-    const res = await FileSystem.getInfoAsync(result.assets[0].uri);
-    console.log(res);
+    if (result.canceled) return;
 
-    /* console.log(result.assets[0].uri); */
+    setImage(result.assets[0].uri);
 
-    /* ReactNativeWaifu2x.convert(
+    if (!model) return;
+
+    const imageUri = await ReactNativeWaifu2x.generate(
       result.assets[0].uri,
-      modelUri.current,
       FileSystem.documentDirectory + 'image.jpg',
+      model.uri,
     );
- */
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
+
+    console.log('Generating success:', imageUri);
+
+    setGeneratedImage(imageUri);
   };
 
-  useEffect(() => {
-    const subscription = ReactNativeWaifu2x.addChangeListener(({ value }) => {
-      console.log(value);
-    });
-
-    return () => subscription.remove();
-  }, []);
-
-  const handlePress = async () => {
+  const loadModel = async () => {
     const result = await DocumentPicker.getDocumentAsync();
-    modelUri.current = result.assets[0].uri + '/';
-    console.log(result.assets[0]);
+
+    if (result.canceled) return;
+
+    setModel({
+      name: result.assets[0].name,
+      uri: result.assets[0].uri,
+    });
   };
 
   return (
     <View style={styles.container}>
-      <Text>{ReactNativeWaifu2x.hello()}</Text>
-      <Button title="picker" onPress={() => handlePress()} />
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-      <Image source={{ uri: FileSystem.documentDirectory + 'image.jpg' }} style={styles.image} />
+      <Button title="Load Model" onPress={() => loadModel()} />
+      <Button title="Pick an image" onPress={pickImage} />
+
+      {model && (
+        <>
+          <Text style={styles.text}>Model Name</Text>
+          <Text>{model.name}</Text>
+        </>
+      )}
+
+      {image && (
+        <>
+          <Text style={styles.text}>Origin Image</Text>
+          <Image source={{ uri: image }} style={styles.image} />
+        </>
+      )}
+
+      {generatedImage && (
+        <>
+          <Text style={styles.text}>Generated Image</Text>
+          <Image source={{ uri: generatedImage }} style={styles.image} />
+        </>
+      )}
     </View>
   );
 }
@@ -76,7 +88,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 300,
+  },
+  text: {
+    marginVertical: 12,
+    fontSize: 18,
   },
 });
