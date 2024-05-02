@@ -1,7 +1,7 @@
 {
   "name": "react-native-waifu2x",
   "version": "0.1.0",
-  "description": "My new module",
+  "description": "Run waifu2x using Core ML on iOS within your Expo & React Native App",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
@@ -21,13 +21,13 @@
     "react-native-waifu2x",
     "ReactNativeWaifu2x"
   ],
-  "repository": "https://github.com/jfmoe/manga-reader/react-native-waifu2x",
+  "repository": "https://github.com/jfmoe/react-native-waifu2x",
   "bugs": {
-    "url": "https://github.com/jfmoe/manga-reader/react-native-waifu2x/issues"
+    "url": "https://github.com/jfmoe/react-native-waifu2x/issues"
   },
-  "author": "jfmoe <34602628+jfmoe@users.noreply.github.com> (https://github.com/jfmoe/manga-reader)",
+  "author": "jfmoe <taoxfan@outlook.com> (https://github.com/jfmoe/react-native-waifu2x)",
   "license": "MIT",
-  "homepage": "https://github.com/jfmoe/manga-reader/react-native-waifu2x#readme",
+  "homepage": "https://github.com/jfmoe/react-native-waifu2x#readme",
   "devDependencies": {
     "@types/react": "^18.0.25",
     "eslint-config-prettier": "^9.1.0",
