@@ -5,9 +5,6 @@
     "version": "0.1.0",
     "description": "My new module",
     "sdkVersion": "50.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ]
+    "platforms": ["ios"]
   }
 }

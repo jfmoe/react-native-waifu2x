@@ -1,9 +1,6 @@
 {
-  "platforms": ["ios", "android"],
+  "platforms": ["ios"],
   "ios": {
     "modules": ["ReactNativeWaifu2xModule"]
-  },
-  "android": {
-    "modules": ["expo.modules.waifu2x.ReactNativeWaifu2xModule"]
   }
 }
