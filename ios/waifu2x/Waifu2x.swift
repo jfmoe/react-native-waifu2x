@@ -35,7 +35,8 @@ public class Waifu2x {
   static private var out_pipeline: BackgroundPipeline<MLMultiArray>! = nil
 
   static public func run(
-    _ image: UIImage!, model: Model!, modelPath: URL!, _ callback: @escaping (String) -> Void = { _ in }
+    _ image: UIImage!, model: Model!, modelPath: URL!,
+    _ callback: @escaping (String) -> Void = { _ in }
   ) -> UIImage? {
     guard image != nil else {
       return nil
@@ -160,7 +161,7 @@ public class Waifu2x {
     let mlmodel = try! MLModel(contentsOf: modelPath!)
     Waifu2x.model_pipeline = BackgroundPipeline<MLMultiArray>("model_pipeline", count: rects.count)
     { (index, array) in
-      out_pipeline.appendObject(try! mlmodel.prediction(input: array))
+      out_pipeline?.appendObject(try! mlmodel.prediction(input: array))
       callback("\((index * 100) / rects.count)")
     }
     // Start running model
@@ -206,7 +207,7 @@ public class Waifu2x {
     Waifu2x.model_pipeline.wait()
     callback("wait_alpha")
     alpha_task?.wait()
-    Waifu2x.out_pipeline.wait()
+    Waifu2x.out_pipeline?.wait()
     Waifu2x.in_pipeline = nil
     Waifu2x.model_pipeline = nil
     Waifu2x.out_pipeline = nil

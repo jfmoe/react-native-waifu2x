@@ -8,29 +8,36 @@ public class ReactNativeWaifu2xModule: Module {
 
     Name("ReactNativeWaifu2x")
 
-    AsyncFunction("generate") { (imageUri: String, saveUri: String, modelUri: String) -> String? in
-      // Generate image
-      let outimage = Waifu2x.run(
-        imageFromLocalUri(imageUri), model: Model.anime_noise1_scale2x,
-        modelPath: URL(string: modelUri))
+    AsyncFunction("generate") {
+      (imageUri: String, saveUri: String, modelUri: String, promise: Promise) in
+      let background = DispatchQueue(label: "background", qos: .utility)
 
-      // Save image
-      let imageData = (outimage!).jpegData(compressionQuality: 1)
-
-      if let uri = URL(string: saveUri) {
-        do {
-          try imageData!.write(to: uri)
-          print("Image saved successfully.")
-          return saveUri
-        } catch {
-          print("Error saving image:", error)
+      background.async {
+        guard let image = imageFromLocalUri(imageUri) else {
+          promise.reject("Error", "Failed to load image from URI: \(imageUri)")
+          return
         }
-      } else {
-        print("Invalid URL.")
-      }
 
-      return nil
+        do {
+          let outimage = try Waifu2x.run(
+            image, model: Model.anime_noise1_scale2x,
+            modelPath: URL(string: modelUri))
+
+          let imageData = outimage?.jpegData(compressionQuality: 1)
+
+          if let uri = URL(string: saveUri) {
+            try imageData?.write(to: uri)
+            promise.resolve(saveUri)
+          } else {
+            promise.reject("Error", "Invalid save URL")
+          }
+        } catch {
+          promise.reject("Error", "Failed to process image using Waifu2x: \(error)")
+        }
+
+      }
     }
+
   }
 }
 
