@@ -1,6 +1,6 @@
 {
   "name": "react-native-waifu2x",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "Run waifu2x using Core ML on iOS within your Expo & React Native App",
   "main": "build/index.js",
   "types": "build/index.d.ts",
