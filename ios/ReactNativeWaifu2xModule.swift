@@ -10,7 +10,7 @@ public class ReactNativeWaifu2xModule: Module {
 
     AsyncFunction("generate") {
       (imageUri: String, saveUri: String, modelUri: String, promise: Promise) in
-      let background = DispatchQueue(label: "background", qos: .utility)
+      let background = DispatchQueue(label: "background")
 
       background.async {
         guard let image = imageFromLocalUri(imageUri) else {
@@ -18,21 +18,23 @@ public class ReactNativeWaifu2xModule: Module {
           return
         }
 
-        do {
-          let outimage = try Waifu2x.run(
-            image, model: Model.anime_noise1_scale2x,
-            modelPath: URL(string: modelUri))
+        let outimage = Waifu2x.run(
+          image, model: Model.anime_noise1_scale2x,
+          modelPath: URL(string: modelUri))
 
-          let imageData = outimage?.jpegData(compressionQuality: 1)
+        DispatchQueue.main.async {
+          do {
+            let imageData = outimage?.jpegData(compressionQuality: 1)
 
-          if let uri = URL(string: saveUri) {
-            try imageData?.write(to: uri)
-            promise.resolve(saveUri)
-          } else {
-            promise.reject("Error", "Invalid save URL")
+            if let uri = URL(string: saveUri) {
+              try imageData?.write(to: uri)
+              promise.resolve(saveUri)
+            } else {
+              promise.reject("Error", "Invalid save URL")
+            }
+          } catch {
+            promise.reject("Error", "Failed to save image: \(error)")
           }
-        } catch {
-          promise.reject("Error", "Failed to process image using Waifu2x: \(error)")
         }
 
       }
